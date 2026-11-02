@@ -1,0 +1,7 @@
+{
+  "TargetUserName": "svc_finance_backup",
+  "IpAddress": "192.168.56.101",
+  "EventID": 4768,
+  "Time": "2026-05-11 10:30:00",
+  "Note": "Sample Event ID 4768 — Kerberos TGT Request for honey account"
+}
