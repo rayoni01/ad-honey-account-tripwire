@@ -23,13 +23,13 @@ def handle_honey_logon(event_json: str):
         return
 
     if event_id == 4768:
-        print(f"[ALERT] Honey account Kerberos TGT Request — Possible Kerberoasting")
+        print(f"[ALERT] Honey account TGT request — User: {user} | Source: {src_ip} | Event: {event_id}")
     elif event_id == 4625:
-        print(f"[ALERT] Honey account Failed Logon — Possible enumeration")
+        print(f"[ALERT] Honey account Failed Logon — Possible enumeration — User: {user} | Source: {src_ip}")
     else:
-        print(f"[ALERT] Honey account activity — Event ID {event_id}")
+        print(f"[ALERT] Honey account activity — Event ID {event_id} — User: {user} | Source: {src_ip}")
 
-    print(f"User: {user} | Source: {src_ip} | Event: {event_id} | Time: {time}")
+    print(f"Time: {time}")
     print(f"Next: Check {src_ip} for BloodHound/SharpHound, review LDAP queries")
 
     # Example SentinelOne workflow — commented, do NOT commit real API key
