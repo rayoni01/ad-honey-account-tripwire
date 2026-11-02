@@ -1,24 +1,17 @@
-# AD Honey Account Tripwire — Active Directory Deception
+## Proof — Lab Simulation (Why 0 events is expected)
 
-**Problem:** Attackers love AD — BloodHound enumeration, Kerberoasting. EDR often misses enumeration.
+This is a lab-safe simulation. On this standalone Windows 11 laptop (non-domain), the Security log filtered for Event ID 4768 shows 0 events — expected behavior.
 
-**Design (Lab Simulation):**
-This is a lab-safe simulation. It does NOT create a real domain user — it creates a decoy credential file to simulate a honey account. In production you would use `New-ADUser svc_finance_backup` with no logon rights.
+![Event Viewer - 4768 - 0 events](event-viewer-4768-zero.png)
 
-**Flow:**
-1. Create honey account name `svc_finance_backup` (attractive name, no real access)
-2. Plant decoy file `AD_Credentials.txt` on Desktop with fake password
-3. Simulate detection: Windows Event ID 4768 (Kerberos TGT Request) or 4625 (Failed Logon) for that user
-4. Detection: `Detect-HoneyLogon.py` parses sample JSON with TargetUserName, IpAddress, EventID and logs alert
+**Why 0 events:**
+- Event ID 4768 = Kerberos TGT Request — only generated on a Domain Controller with Kerberos auditing
+- This laptop is not a domain controller, so no real 4768 for `svc_finance_backup`
+- In production: Enable auditing on DC, create real AD user `New-ADUser -SamAccountName svc_finance_backup`
 
-**What this repo contains:**
-- `Create-HoneyADUser.ps1` — Lab-safe script that creates decoy credential file (not real AD)
-- `Detect-HoneyLogon.py` — Parses sample honey logon JSON and formats alert for SOAR
-- `sample_honey_event.json` — Sample Event ID 4768 payload
-
-**MITRE:**
-- T1087 Account Discovery
-- T1558 Kerberoasting (4768)
-- T1003 Credential Dumping (4625)
-
-Author: Brian Rayoni
+**What this lab shows instead:**
+- `sample_honey_event.json` — sample Event ID 4768 payload for parser testing
+- `Detect-HoneyLogon.py` — parses sample JSON and formats alert for SOAR workflow
+- Parser output:
+  `[ALERT] Honey account Kerberos TGT Request — Possible Kerberoasting`
+  `User: svc_finance_backup | Source: 192.168.56.101 | Event: 4768`
